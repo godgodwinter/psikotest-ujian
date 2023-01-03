@@ -1,10 +1,15 @@
 const loginRoutes = [
   {
-    path: "/login",
+    path: "/login_index",
     name: "Login",
     component: () => import("@/views/examples/exLayout.vue"),
-    redirect: "/login_00",
+    redirect: "/login",
     children: [
+      {
+        path: '/login',
+        name: 'login_index',
+        component: () => import('@/views/Login.vue')
+      },
       {
         path: '/login_00',
         name: 'login_00',

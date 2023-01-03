@@ -5,17 +5,9 @@
     {{ list[0] }}
   </div>
   <div class="flex m-10">
-    <VueDraggableNext
-      v-model="list"
-      class="dragArea list-group w-full"
-      :list="list"
-      @change="log"
-    >
-      <div
-        class="list-group-item bg-gray-300 m-1 p-3 rounded-md text-center"
-        v-for="element in list"
-        :key="element.name"
-      >
+    <VueDraggableNext v-model="list" class="dragArea list-group w-full" :list="list" @change="log">
+      <div class="list-group-item bg-gray-300 m-1 p-3 rounded-md text-center" v-for="element in list"
+        :key="element.name">
         <label class="font-bold text-3xl"> {{ element.name }}</label>
       </div>
     </VueDraggableNext>

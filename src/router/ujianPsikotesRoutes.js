@@ -1,9 +1,19 @@
+
 const ujianPsikotesRoutes = [
   {
     path: "/up",
     name: "Up",
     component: () => import("@/layouts/UjianPsikotesLayout.vue"),
     redirect: "/ujian",
+    meta: {
+      requireAuth: true,
+      title: "Admin",
+      breadcrumb: {
+        name: "Up",
+        path: "/up",
+        goto: "Up",
+      },
+    },
     children: [
       {
         path: "/ujian",

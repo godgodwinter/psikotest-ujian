@@ -1,5 +1,15 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
+import { RouterLink, RouterView, useRouter } from "vue-router";
+import API from "@/services/authServices";
+const router = useRouter();
+const doLogout = async () => {
+    if (confirm("Apakah anda yakin untuk Logout ?")) {
+        const res = await API.doLogout();
+        if (res === true) {
+            router.push({ name: "Login" });
+        }
+    };
+};
 </script>
 
 <template>
@@ -45,10 +55,7 @@ import { RouterLink, RouterView } from "vue-router";
                     </ul>
                 </div>
                 <div class="navbar-end">
-                    <RouterLink :to="{ name: 'Login' }">
-
-                        <button class="btn btn-default btn-sm">Logout</button>
-                    </RouterLink>
+                    <button class="btn btn-default btn-sm" @click="doLogout()">Logout</button>
                     <!-- <label for="my-drawer" class="btn btn-primary drawer-button">
                     Soal
                 </label> -->
