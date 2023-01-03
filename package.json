@@ -1,0 +1,30 @@
+{
+  "name": "vue-23-0",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite --port=1000",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.2.2",
+    "daisyui": "^2.45.0",
+    "jwt-decode": "^3.1.2",
+    "moment": "^2.29.4",
+    "mosha-vue-toastify": "^1.0.23",
+    "pinia": "^2.0.28",
+    "vue": "^3.2.45",
+    "vue-draggable-next": "^2.1.1",
+    "vue-good-table-next": "^0.2.1",
+    "vue-router": "^4.1.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.8",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "autoprefixer": "^10.4.13",
+    "postcss": "^8.4.20",
+    "tailwindcss": "^3.2.4",
+    "vite": "^4.0.0"
+  }
+}
