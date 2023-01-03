@@ -1,3 +1,21 @@
+<script setup>
+import { ref } from "vue"
+import Api from "@/axios/axios";
+
+const dataAsli = ref(null)
+const dataSiswa = ref(null)
+const getData = async () => {
+  try {
+    const response = await Api.post(`siswa/auth/me`);
+    dataAsli.value = response;
+    dataSiswa.value = response.identitas;
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+getData();
+</script>
 <template>
   <div class="p-4">
     <div class="alert alert-warning shadow-lg">
@@ -12,7 +30,7 @@
     </div>
   </div>
 
-  <div class="md:py-2 p-4 lg:flex flex-wrap gap-4">
+  <div class="md:py-2 p-4 lg:flex flex-wrap gap-4" v-if="dataSiswa">
     <div class="w-full lg:w-full">
       <div class="bg-white shadow rounded-lg px-4 py-4">
         <div class="overflow-x-auto">
@@ -23,32 +41,37 @@
                 <td class="whitespace-nowrap w-1/12">No Induk</td>
                 <td class="whitespace-nowrap w-1/12">:</td>
                 <td class="whitespace-nowrap w-10/12">
-                  aa
+                  {{ dataSiswa.nomeridentitas }}
                 </td>
               </tr>
               <!-- row 2 -->
               <tr>
                 <td>Nama</td>
                 <td>:</td>
-                <td>bb</td>
+                <td>{{ dataSiswa.nama }}</td>
               </tr>
               <!-- row 3 -->
-              <tr>
+              <!-- <tr>
                 <td>Umur</td>
                 <td>:</td>
-                <td>cc</td>
-              </tr>
+                <td>{{ dataSiswa.umur }}</td>
+              </tr> -->
               <!-- row 3 -->
               <tr>
                 <td>Jenis Kelamin</td>
                 <td>:</td>
-                <td>dd</td>
+                <td>{{ dataSiswa.jk }}</td>
               </tr>
               <!-- row 3 -->
               <tr>
                 <td>Sekolah</td>
                 <td>:</td>
-                <td>cc</td>
+                <td>{{ dataSiswa.sekolah_nama }}</td>
+              </tr>
+              <tr>
+                <td>Kelas</td>
+                <td>:</td>
+                <td>{{ dataSiswa.kelas_nama }}</td>
               </tr>
             </tbody>
           </table>

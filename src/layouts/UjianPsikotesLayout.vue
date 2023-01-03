@@ -1,6 +1,10 @@
 <script setup>
+import { ref, computed } from "vue"
 import { RouterLink, RouterView, useRouter } from "vue-router";
+import Toast from "@/components/lib/Toast.js";
 import API from "@/services/authServices";
+import { useStoreAdminAuth } from "@/stores/adminAuth";
+const storeAdminAuth = useStoreAdminAuth();
 const router = useRouter();
 const doLogout = async () => {
     if (confirm("Apakah anda yakin untuk Logout ?")) {
@@ -10,6 +14,24 @@ const doLogout = async () => {
         }
     };
 };
+const token = computed(() => storeAdminAuth.getToken);
+const resCheckToken = ref([]);
+const checkTokenExpired = async (dataToken) => {
+    resCheckToken.value = await API.doCheckToken(dataToken);
+    if (resCheckToken.value === false) {
+        API.doLogout(false);
+        Toast.danger("Info", "Token Expired");
+        router.push({ name: "Login" });
+    }
+};
+
+if (token.value) {
+    // console.log("isTokenExpired");
+    checkTokenExpired(token.value);
+} else {
+    Toast.info("Info", "Silahkan login terlebih dahulu");
+    router.push({ name: "LandingLogin" });
+}
 </script>
 
 <template>
