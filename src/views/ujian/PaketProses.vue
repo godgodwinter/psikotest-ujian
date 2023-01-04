@@ -158,7 +158,7 @@ const goBack = (nomer) => {
 
 
         <button @click="goBack(no_soal)" v-if="no_soal > 1">
-          <button class="btn btn-sm btn-accent">Selanjutnya</button>
+          <button class="btn btn-sm btn-accent">Sebelumnya</button>
         </button>
         <button @click="goNext(no_soal)" v-if="no_soal < data?.soal_jml">
           <button class="btn btn-sm btn-info">Selanjutnya</button>
