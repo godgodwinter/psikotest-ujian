@@ -18,14 +18,18 @@ const getData = async () => {
 getData();
 
 const doMulai = (id) => {
-  console.log('====================================');
-  console.log('mulai', id);
-  console.log('====================================');
-}
-const doLanjutkan = (id) => {
+  // console.log('====================================');
+  // console.log('mulai', id);
+  // console.log('====================================');
   router.push({
     name: 'ujian.psikotest.paket.aspek',
     params: { aspek_id: id }
+  })
+}
+const doLanjutkan = (id) => {
+  router.push({
+    name: 'ujian.psikotest.paket.proses',
+    params: { aspek_id: id, no_soal: 1 }
   })
   // console.log('====================================');
   // console.log('lanjutkan', id);
@@ -54,6 +58,7 @@ const doLanjutkan = (id) => {
             <th>Judul</th>
             <th>Status</th>
             <th>Waktu Pengerjaan</th>
+            <th>Jumlah Soal</th>
             <th>Tipe</th>
           </tr>
         </thead>
@@ -69,6 +74,7 @@ const doLanjutkan = (id) => {
 
             </td>
             <td>{{ item.paketsoal_waktu }} menit</td>
+            <td>{{ item.paketsoal_soal_jml }} soal</td>
             <td>{{ item.tipe }}</td>
           </tr>
         </tbody>

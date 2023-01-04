@@ -29,10 +29,14 @@ const router = createRouter({
 
 
 router.beforeEach((to, from, next) => {
+  // middleware login
   if (
     to.matched.some((record) => record.meta.requireAuth) &&
     !localStorage.getItem("isLogin")
   ) {
+    // 1.periksa apakah token valid
+    // 2. jikat tidak valid maka remove localstorage
+    // 3. pergi kemenu login
     Toast.babeng("Info", "Silahkan Login terlebih dahulu!");
     // console.log("belum login");
     // next("/login");
@@ -42,6 +46,26 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
+
+  // // middleware proses pengerjaan  soal
+  // if (
+  //   to.matched.some((record) => record.meta.requireProsesAktif) &&
+  //   !localStorage.getItem("isProsesAktif")
+  // ) {
+  //   Toast.babeng("Info", "Sesi ujian tidak ditemukan!");
+  //   console.log("requireProsesAktif");
+  //   // next("/login");
+  //   // next({ name: "ujian.psikotest.paket" });
+
+  //   // next({ name: "Login" });
+  //   // console.log(to);
+  //   // next({ name: "login", query: { next: to.fullPath } });
+  //   // router.push({
+  //   //   name: ujian.psikotest.paket
+  //   // })
+  // } else {
+  //   next();
+  // }
 });
 
 export default router;
