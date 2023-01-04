@@ -1,8 +1,10 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
+import { RouterLink, RouterView, useRoute } from "vue-router";
 import { ref } from "vue"
 import Api from "@/axios/axios";
 
+const route = useRoute();
+const aspek_id = route.params.aspek_id;
 const dataAsli = ref(null)
 const data = ref(null)
 const getData = async () => {
@@ -18,45 +20,48 @@ const getData = async () => {
 getData();
 </script>
 <template>
-  <div class="p-4" v-if="data == null">
-    <div class="alert alert-error shadow-lg">
-      <div>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-          class="stroke-current flex-shrink-0 w-6 h-6">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        <span>Ujian aktif tidak ditemukan!</span>
+  <div class="p-4">
+    <div class="flex m-4 lg:m-6 justify-center">
+
+      <div class="grid-cols-1 w-96">
+        <article class="prose">
+          <h2>JUDUL</h2>
+        </article>
       </div>
     </div>
-  </div>
-  <div class="p-4">
-    <div class="overflow-x-auto">
-      <table class="table table-compact w-full">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Judul</th>
-            <th>Status</th>
-            <th>Waktu Pengerjaan</th>
-            <th>Tipe</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item, index in data" :key="item.id">
-            <th>{{ index + 1 }}</th>
-            <th>{{ item.paketsoal_nama }}</th>
-            <td>
-              <button class="btn btn-info" v-if="item.status == 'lanjutkan'">LANJUTKAN</button>
-              <button class="btn btn-warning" v-else-if="item.status == 'selesai'">SELESAI</button>
-              <button class="btn btn-primary" v-else>MULAI</button>
 
-            </td>
-            <td>{{ item.paketsoal_waktu }} menit</td>
-            <td>{{ item.tipe }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="divider"></div>
+    <div class=" bg-gray-100 m-1 p-3 rounded-md text-justify w-full">
+      <article class="prose">
+        <h2>1. Instruksi :</h2>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, aspernatur vero pariatur in sint
+          consectetur modi molestiae quis, culpa tenetur possimus. Omnis iste esse, nisi reprehenderit tenetur
+          voluptate aspernatur praesentium.</p>
+      </article>
     </div>
+    <div class="divider"></div>
+    <div class=" bg-gray-100 m-1 p-3 rounded-md text-justify w-full">
+      <article class="prose">
+        <h2>2. Instruksi :</h2>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus, aspernatur vero pariatur in sint
+          consectetur modi molestiae quis, culpa tenetur possimus. Omnis iste esse, nisi reprehenderit tenetur
+          voluptate aspernatur praesentium.</p>
+      </article>
+    </div>
+    <div class="divider"></div>
+    <div>
+      <div class="w-full flex justify-center px-4">
+        <RouterLink :to="{ name: 'ujian.psikotest.paket.proses', params: { aspek_id, no_soal: 1 } }">
+          <button class="btn btn-lg btn-success">Mulai</button>
+        </RouterLink>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <!-- <div>
+          <div class="w-full flex justify-center px-4 space-x-2">
+              <button class="btn btn-sm btn-accent">Sebelumnya</button>
+              <button class="btn btn-sm btn-info">Selanjutnya</button>
+          </div>
+      </div> -->
   </div>
 </template>

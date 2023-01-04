@@ -30,6 +30,11 @@ const ujianPsikotesRoutes = [
         name: "ujian.psikotest.paket.aspek",
         component: () => import("@/views/ujian/PaketAspek.vue"),
       },
+      {
+        path: "/paket/aspek/:aspek_id/nomer/:no_soal",
+        name: "ujian.psikotest.paket.proses",
+        component: () => import("@/views/ujian/PaketProses.vue"),
+      },
     ],
   },
 ];

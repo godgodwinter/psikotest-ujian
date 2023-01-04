@@ -1,8 +1,8 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
+import { RouterLink, RouterView, useRouter } from "vue-router";
 import { ref } from "vue"
 import Api from "@/axios/axios";
-
+const router = useRouter();
 const dataAsli = ref(null)
 const data = ref(null)
 const getData = async () => {
@@ -16,6 +16,21 @@ const getData = async () => {
   }
 };
 getData();
+
+const doMulai = (id) => {
+  console.log('====================================');
+  console.log('mulai', id);
+  console.log('====================================');
+}
+const doLanjutkan = (id) => {
+  router.push({
+    name: 'ujian.psikotest.paket.aspek',
+    params: { aspek_id: id }
+  })
+  // console.log('====================================');
+  // console.log('lanjutkan', id);
+  // console.log('====================================');
+}
 </script>
 <template>
   <div class="p-4" v-if="data == null">
@@ -47,9 +62,10 @@ getData();
             <th>{{ index + 1 }}</th>
             <th>{{ item.paketsoal_nama }}</th>
             <td>
-              <button class="btn btn-info" v-if="item.status == 'lanjutkan'">LANJUTKAN</button>
+              <button class="btn btn-info" v-if="item.status == 'lanjutkan'"
+                @click="doLanjutkan(item.id)">LANJUTKAN</button>
               <button class="btn btn-warning" v-else-if="item.status == 'selesai'">SELESAI</button>
-              <button class="btn btn-primary" v-else>MULAI</button>
+              <button class="btn btn-primary" v-else @click="doMulai(item.id)">MULAI</button>
 
             </td>
             <td>{{ item.paketsoal_waktu }} menit</td>

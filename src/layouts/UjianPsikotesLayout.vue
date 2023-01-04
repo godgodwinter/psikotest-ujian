@@ -8,6 +8,9 @@ import { useStoreAdminAuth } from "@/stores/adminAuth";
 import moment from "moment/min/moment-with-locales";
 import localization from "moment/locale/id";
 import { useTimerStore } from "@/stores/timerStore";
+const BASE_URL_FE = import.meta.env.VITE_API_URLFE
+    ? import.meta.env.VITE_API_URLFE
+    : "http://localhost:1000/";
 const timerStore = useTimerStore();
 timerStore.$subscribe((mutation, state) => {
     // console.log(mutation, state);
@@ -57,9 +60,13 @@ const getData = async () => {
     try {
         const response = await Api.get(`siswa/v2/data/ujian/proses/aktif`);
         dataProsesUjianAktif.value = response.data;
-        dataProsesUjianAktif_waktu.value = dataProsesUjianAktif.value.sisa_waktu.detik;
+        dataProsesUjianAktif_waktu.value = dataProsesUjianAktif.value?.sisa_waktu.detik;
         // menit.value = moment.utc(dataProsesUjianAktif_waktu.value * 1000).format('HH:mm:ss');
-        onKlik(dataProsesUjianAktif_waktu.value);
+        if (dataProsesUjianAktif.value) {
+            onKlik(dataProsesUjianAktif_waktu.value);
+            linkSoal.value = `${BASE_URL_FE}paket/aspek/${dataProsesUjianAktif.value.id}/nomer/`;
+            // console.log(linkSoal.value);
+        }
         return response.data;
     } catch (error) {
         console.error(error);
@@ -70,6 +77,9 @@ const onKlik = (time) => {
     timerStore.doJalankanTimer(time);
     // timerStore.fnDecrement();
 }
+
+
+const linkSoal = ref(null)
 </script>
 
 <template>
@@ -165,8 +175,10 @@ const onKlik = (time) => {
 
                     <div class="divider"></div>
                     <div class="flex flex-wrap  gap-2">
-                        <button class="btn btn-md btn-info" v-for="i in dataProsesUjianAktif.paketsoal_soal_jml">{{ i
-}}</button>
+                        <a :href="linkSoal + i" class="btn btn-md btn-info"
+                            v-for="i in dataProsesUjianAktif.paketsoal_soal_jml">{{
+        i
+}}</a>
                     </div>
 
                 </span>
