@@ -3,7 +3,23 @@ import { ref, computed } from "vue"
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import Toast from "@/components/lib/Toast.js";
 import API from "@/services/authServices";
+import Api from "@/axios/axios";
 import { useStoreAdminAuth } from "@/stores/adminAuth";
+import moment from "moment/min/moment-with-locales";
+import localization from "moment/locale/id";
+import { useTimerStore } from "@/stores/timerStore";
+const timerStore = useTimerStore();
+timerStore.$subscribe((mutation, state) => {
+    // console.log(mutation, state);
+    // console.log(mutation);
+    // console.log(state.waktu);
+}, { detached: false }) //jika detached true :terpisah meskipun komponent di unmount subcrib tetap dijalankan [bug jika halaman di buka 2x akan dieksekusi 2x]
+// timerStore.decrement();
+const waktu = computed(() => timerStore.getWaktu);
+
+const timer = ref(10);
+
+moment.updateLocale("id", localization);
 const storeAdminAuth = useStoreAdminAuth();
 const router = useRouter();
 const doLogout = async () => {
@@ -32,6 +48,28 @@ if (token.value) {
     Toast.info("Info", "Silahkan login terlebih dahulu");
     router.push({ name: "LandingLogin" });
 }
+
+
+const dataProsesUjianAktif = ref(null)
+const dataProsesUjianAktif_waktu = ref(null)
+const menit = ref(null)
+const getData = async () => {
+    try {
+        const response = await Api.get(`siswa/v2/data/ujian/proses/aktif`);
+        dataProsesUjianAktif.value = response.data;
+        dataProsesUjianAktif_waktu.value = dataProsesUjianAktif.value.sisa_waktu.detik;
+        // menit.value = moment.utc(dataProsesUjianAktif_waktu.value * 1000).format('HH:mm:ss');
+        onKlik(dataProsesUjianAktif_waktu.value);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+    }
+};
+getData();
+const onKlik = (time) => {
+    timerStore.doJalankanTimer(time);
+    // timerStore.fnDecrement();
+}
 </script>
 
 <template>
@@ -59,10 +97,11 @@ if (token.value) {
                         </ul>
                     </div>
                     <!-- <a class="btn btn-ghost normal-case text-xl">CBT PSIKOTES</a> -->
-                    <a class="btn btn-ghost normal-case text-xl">
+                    <button class="btn btn-sm" v-if="dataProsesUjianAktif"> {{ moment.utc(waktu *
+        1000).format('HH:mm:ss')
+}}</button>
+                    <a class="btn btn-ghost normal-case text-xl" v-else>
                         UJIAN PSIKOTES
-
-
                     </a>
                 </div>
                 <div class="navbar-center hidden lg:flex">
@@ -76,8 +115,11 @@ if (token.value) {
                         <!-- <li><a>Proses</a></li> -->
                     </ul>
                 </div>
-                <div class="navbar-end">
-                    <button class="btn btn-default btn-sm" @click="doLogout()">Logout</button>
+                <div class="navbar-end space-x-2">
+                    <label for="my-drawer" class="btn btn-primary drawer-button btn-sm" v-if="dataProsesUjianAktif">
+                        Soal
+                    </label>
+                    <button class="btn btn-default btn-sm" @click="doLogout()" v-else>Logout</button>
                     <!-- <label for="my-drawer" class="btn btn-primary drawer-button">
                     Soal
                 </label> -->
@@ -112,22 +154,50 @@ if (token.value) {
                 <RouterView />
             </div>
         </div>
-        <div class="drawer-side">
+        <div class="drawer-side" v-if="dataProsesUjianAktif">
             <label for="my-drawer" class="drawer-overlay"></label>
             <!-- <ul class="menu p-4 w-80 bg-base-100 text-base-content">
                 <li><a>Sidebar Item 1</a></li>
                 <li><a>Sidebar Item 2</a></li>
             </ul> -->
             <ul class="menu p-4 w-80 bg-base-100 text-base-content">
-                <span>
+                <span class="py-10">
+
+                    <div class="divider"></div>
                     <div class="flex flex-wrap  gap-2">
-                        <button class="btn btn-md btn-info" v-for="i in 10">{{ i }}</button>
+                        <button class="btn btn-md btn-info" v-for="i in dataProsesUjianAktif.paketsoal_soal_jml">{{ i
+}}</button>
                     </div>
+
                 </span>
                 <div class="divider"></div>
                 <span>
                     <button class="btn btn-error btn-md">Selesai</button>
                 </span>
+                <div class="divider"></div>
+                <div>
+                    <div class="overflow-x-auto">
+                        <table class="table w-full">
+                            <tbody>
+                                <tr>
+                                    <th>Jumlah Soal</th>
+                                    <td>:</td>
+                                    <td>{{ dataProsesUjianAktif.paketsoal_soal_jml }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Jumlah Terjawab</th>
+                                    <td>:</td>
+                                    <td>{{ dataProsesUjianAktif.paketsoal_soal_jml_terjawab }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Jumlah Terjawaban</th>
+                                    <td>:</td>
+                                    <td>{{ dataProsesUjianAktif.paketsoal_soal_jml_belum }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </ul>
         </div>
     </div>
