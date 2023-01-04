@@ -144,9 +144,10 @@ const doSelesai = async () => {
                     </ul>
                 </div>
                 <div class="navbar-end space-x-2">
-                    <a :href="linkSoal + 1" class="btn btn-sm" v-if="dataProsesUjianAktif"> {{ moment.utc(waktu *
-        1000).format('HH:mm:ss')
-}}</a>
+                    <a :href="linkSoal + 1" class="btn btn-sm" v-if="dataProsesUjianAktif"> {{
+                        moment.utc(waktu *
+                            1000).format('HH:mm:ss')
+                    }}</a>
                     <button class="btn btn-default btn-sm" @click="doLogout()" v-else>Logout</button>
                     <!-- <label for="my-drawer" class="btn btn-primary drawer-button">
                     Soal
@@ -195,11 +196,11 @@ const doSelesai = async () => {
                     <div class="flex flex-wrap  gap-2">
                         <span v-for="item, index in dataProsesUjianAktif.hasil" :key="item.id">
                             <a :href="linkSoal + (index + 1)" class="btn btn-md btn-info" v-if="item.kode_jawaban">{{
-        (index + 1)
-}}</a>
+                            (index + 1)
+                            }}</a>
                             <a :href="linkSoal + (index + 1)" class="btn btn-md btn-warning" v-else>{{
-        (index + 1)
-}}</a>
+                            (index + 1)
+                            }}</a>
                         </span>
                     </div>
 
@@ -207,6 +208,10 @@ const doSelesai = async () => {
                 <div class="divider"></div>
                 <span>
                     <button class="btn btn-error btn-md" @click="doSelesai()">Selesai</button>
+                </span>
+                <div class="divider"></div>
+                <span>
+                    <button class="btn btn-primary btn-md" @click="getData()">Refresh Data</button>
                 </span>
                 <div class="divider"></div>
                 <div>

@@ -57,6 +57,13 @@ const goNext = (nomer) => {
   router.push({ name: 'ujian.psikotest.paket.proses', params: { aspek_id, no_soal: (no_go) } });
 }
 
+const goBack = (nomer) => {
+  let no_go = parseInt(nomer) - 1;
+  getData(no_go);
+  linkStore.value = `siswa/v2/data/ujian/aktif/aspek/null/soal/${no_go}`;
+  no_soal.value = no_go;
+  router.push({ name: 'ujian.psikotest.paket.proses', params: { aspek_id, no_soal: (no_go) } });
+}
 
 // watch(route.params.no_soal, async (newData, oldData) => {
 //   console.log('====================================');
@@ -148,10 +155,12 @@ const goNext = (nomer) => {
     <!-- <div class="divider"></div> -->
     <div class="pb-5">
       <div class="w-full flex justify-end px-4 space-x-2">
-        <a :href="linkBefore" v-if="no_soal > 1">
-          <button class="btn btn-sm btn-accent">Sebelumnya</button></a>
 
 
+
+        <button @click="goBack(no_soal)" v-if="no_soal > 1">
+          <button class="btn btn-sm btn-accent">Selanjutnya</button>
+        </button>
         <button @click="goNext(no_soal)" v-if="no_soal < data?.soal_jml">
           <button class="btn btn-sm btn-info">Selanjutnya</button>
         </button>
