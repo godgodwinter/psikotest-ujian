@@ -1,6 +1,6 @@
 <script setup>
-import { RouterLink, RouterView, useRoute } from "vue-router";
-import { ref } from "vue"
+import { RouterLink, RouterView, useRoute, useRouter } from "vue-router";
+import { ref, watch } from "vue"
 import Api from "@/axios/axios";
 import Fungsi from "@/components/lib/FungsiCampur"
 import Toast from "@/components/lib/Toast.js";
@@ -8,13 +8,14 @@ const BASE_URL_FE = import.meta.env.VITE_API_URLFE
   ? import.meta.env.VITE_API_URLFE
   : "http://localhost:1000/";
 const route = useRoute();
+const router = useRouter();
 const aspek_id = route.params.aspek_id;
-const no_soal = route.params.no_soal;
+const no_soal = ref(route.params.no_soal);
 const dataAsli = ref(null)
 const data = ref(null)
-const getData = async () => {
+const getData = async (nomer) => {
   try {
-    const response = await Api.get(`siswa/v2/data/ujian/aktif/aspek/null/soal/${no_soal}`);
+    const response = await Api.get(`siswa/v2/data/ujian/aktif/aspek/null/soal/${nomer}`);
     dataAsli.value = response.data;
     data.value = response.data;
     // console.log(data.value.pilihan);
@@ -24,26 +25,44 @@ const getData = async () => {
     console.error(error);
   }
 };
-getData();
-const linkSoal = ref(`${BASE_URL_FE}paket/aspek/${aspek_id}/nomer/${no_soal}`)
+getData(no_soal.value);
+const linkSoal = ref(`${BASE_URL_FE}paket/aspek/${aspek_id}/nomer/${no_soal.value}`)
 
-const linkBefore = ref(`${BASE_URL_FE}paket/aspek/${aspek_id}/nomer/${parseInt(no_soal) - 1}`)
-const linkNext = ref(`${BASE_URL_FE}paket/aspek/${aspek_id}/nomer/${parseInt(no_soal) + 1}`)
-
+const linkBefore = ref(`${BASE_URL_FE}paket/aspek/${aspek_id}/nomer/${parseInt(no_soal.value) - 1}`)
+const linkNext = ref(`${BASE_URL_FE}paket/aspek/${aspek_id}/nomer/${parseInt(no_soal.value) + 1}`)
+const linkStore = ref(`siswa/v2/data/ujian/aktif/aspek/null/soal/${no_soal.value}`)
+// console.log('====================================');
+// console.log(no_soal.value, linkStore.value);
+// console.log('====================================');
 const doStoreData = async (kode_jawaban) => {
   let dataStore = {
     kode_jawaban: kode_jawaban,
   };
   try {
-    const response = await Api.post(`siswa/v2/data/ujian/aktif/aspek/null/soal/${no_soal}`, dataStore);
+    const response = await Api.post(linkStore.value, dataStore);
     Toast.success("Success", "Data Berhasil disimpan!");
-    getData();
+    getData(no_soal.value);
 
   } catch (error) {
     Toast.danger("Warning", "Data gagal disimpan!");
     console.error(error);
   }
 };
+
+const goNext = (nomer) => {
+  let no_go = parseInt(nomer) + 1;
+  getData(no_go);
+  linkStore.value = `siswa/v2/data/ujian/aktif/aspek/null/soal/${no_go}`;
+  no_soal.value = no_go;
+  router.push({ name: 'ujian.psikotest.paket.proses', params: { aspek_id, no_soal: (no_go) } });
+}
+
+
+// watch(route.params.no_soal, async (newData, oldData) => {
+//   console.log('====================================');
+//   console.log(newData, oldData);
+//   console.log('====================================');
+// })
 </script>
 <template>
   <div v-if="data">
@@ -74,7 +93,7 @@ const doStoreData = async (kode_jawaban) => {
             <div class="divider"></div>
             <span class="font-extralight text-xs">
               <span class="font-bold">Jawaban tersimpan : </span>
-              <span>{{ data.jawaban_tersimpan ? Fungsi.fnNumberToAlphabet(data.jawaban_tersimpan) : "-" }}</span>
+              <!-- <span>{{ data.jawaban_tersimpan ? Fungsi.fnNumberToAlphabet(data.jawaban_tersimpan) : "-" }}</span> -->
               <!-- <div class="divider"></div> -->
               <span v-html="data?.paketsoal_pilihanjawaban?.jawaban">
 
@@ -83,7 +102,7 @@ const doStoreData = async (kode_jawaban) => {
           </div>
         </div>
       </div>
-
+      <!-- {{ linkStore }} -->
       <div class="px-4 lg:px-10" v-if="data?.pilihan">
         <div class="p-4" v-for="item, index in data.pilihan" :key="item.kode_soal"
           @click="doStoreData(item.kode_jawaban)">
@@ -131,11 +150,22 @@ const doStoreData = async (kode_jawaban) => {
       <div class="w-full flex justify-end px-4 space-x-2">
         <a :href="linkBefore" v-if="no_soal > 1">
           <button class="btn btn-sm btn-accent">Sebelumnya</button></a>
+
+
+        <button @click="goNext(no_soal)" v-if="no_soal < data?.soal_jml">
+          <button class="btn btn-sm btn-info">Selanjutnya</button>
+        </button>
+      </div>
+    </div>
+    <!-- <div class="pb-5">
+      <div class="w-full flex justify-end px-4 space-x-2">
+        <a :href="linkBefore" v-if="no_soal > 1">
+          <button class="btn btn-sm btn-accent">Sebelumnya</button></a>
         <a :href="linkNext" v-if="no_soal < data?.soal_jml">
           <button class="btn btn-sm btn-info">Selanjutnya</button>
         </a>
       </div>
-    </div>
+    </div> -->
   </div>
   <div v-else>
     <!-- <div class="p-4">
