@@ -72,7 +72,7 @@ const doSubmit = async () => {
                 {{ errors.username }}
               </div>
               <Field :rules="fnValidasi.validateData2" placeholder="Password" v-model="password" name="password"
-                type="text"
+                type="password"
                 class="flex px-3 py-2 md:px-4 md:py-3 border-2 border-black rounded-lg font-medium placeholder:font-normal" />
               <div class="text-xs text-red-600 mt-1">
                 {{ errors.password }}
