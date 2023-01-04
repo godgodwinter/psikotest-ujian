@@ -128,9 +128,11 @@ const doSelesai = async () => {
                     <label for="my-drawer" class="btn btn-primary drawer-button btn-sm" v-if="dataProsesUjianAktif">
                         MENU SOAL
                     </label>
-                    <a class="btn btn-ghost normal-case text-xl" v-else>
-                        UJIAN PSIKOTES
-                    </a>
+                    <RouterLink :to="{ name: 'ujian.psikotest.paket' }" v-else>
+                        <span class="btn btn-ghost normal-case text-xl">
+                            UJIAN
+                        </span>
+                    </RouterLink>
                 </div>
                 <div class="navbar-center hidden lg:flex">
                     <ul class="menu menu-horizontal px-1">

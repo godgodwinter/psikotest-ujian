@@ -111,8 +111,7 @@ const goBack = (nomer) => {
       </div>
       <!-- {{ linkStore }} -->
       <div class="px-4 lg:px-10" v-if="data?.pilihan">
-        <div class="p-4" v-for="item, index in data.pilihan" :key="item.kode_soal"
-          @click="doStoreData(item.kode_jawaban)">
+        <div class="p-4" v-for="item, index in data.pilihan" :key="item.id" @click="doStoreData(item.kode_jawaban)">
           <div class="card w-full bg-info shadow-md hover:shadow-lg text-justify"
             v-if="data?.kode_jawaban == item.kode_jawaban">
             <div class="card-body">
