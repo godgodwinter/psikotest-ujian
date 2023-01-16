@@ -2,6 +2,8 @@
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import { ref } from "vue"
 import Api from "@/axios/axios";
+import Toast from "@/components/lib/Toast.js";
+
 const router = useRouter();
 const dataAsli = ref(null)
 const data = ref(null)
@@ -17,14 +19,18 @@ const getData = async () => {
 };
 getData();
 
-const doMulai = (id) => {
+const doMulai = (id, tipe) => {
   // console.log('====================================');
   // console.log('mulai', id);
   // console.log('====================================');
-  router.push({
-    name: 'ujian.psikotest.paket.aspek',
-    params: { aspek_id: id }
-  })
+  if (tipe == 'Skolastik') {
+    router.push({
+      name: 'ujian.psikotest.paket.aspek',
+      params: { aspek_id: id }
+    })
+  } else if (tipe == 'KFace') {
+    Toast.warning("Info", 'Menu belum tersedia!');
+  }
 }
 const doLanjutkan = (id) => {
   router.push({
@@ -70,7 +76,7 @@ const doLanjutkan = (id) => {
               <button class="btn btn-info" v-if="item.status == 'lanjutkan'"
                 @click="doLanjutkan(item.id)">LANJUTKAN</button>
               <button class="btn btn-warning" v-else-if="item.status == 'selesai'">SELESAI</button>
-              <button class="btn btn-primary" v-else @click="doMulai(item.id)">MULAI</button>
+              <button class="btn btn-primary" v-else @click="doMulai(item.id, item.tipe)">MULAI</button>
 
             </td>
             <td>{{ item.paketsoal_waktu }} menit</td>
