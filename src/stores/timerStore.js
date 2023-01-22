@@ -9,7 +9,7 @@ import { useRouter } from "vue-router";
 export const useTimerStore = defineStore('timerStore', () => {
   const router = useRouter();
   // State
-  const waktu = ref(10)
+  const waktu = ref(0)
   // Getter Setter
   const getWaktu = computed(() => waktu.value);
   const setWaktu = (n) => {

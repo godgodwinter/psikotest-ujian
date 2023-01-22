@@ -1,7 +1,7 @@
 <template>
     <div class="navbar bg-base-300">
         <div class="navbar-start">
-            loading . . .
+            <img src="@/assets/img/svg-loaders/three-dots.svg" />
         </div>
         <div class="navbar-center hidden lg:flex">
 

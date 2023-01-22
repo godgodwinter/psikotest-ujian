@@ -145,7 +145,7 @@ const doSelesai = async () => {
         <div class="fixed z-50 navbar bg-base-300 top-0">
             <!-- NAVBAR-START -->
             <LoadingNavbar v-if="tipe === null">1.</LoadingNavbar>
-            <SkolastikNavbar v-else-if="tipe === 'skolastik'">2.</SkolastikNavbar>
+            <SkolastikNavbar v-else-if="tipe === 'Skolastik'">2.</SkolastikNavbar>
             <KfaceNavbar v-else-if="tipe === 'KFace'" />
             <DefaultNavbar v-else>else {{ tipe }}</DefaultNavbar>
             <!-- NAVBAR-END -->
@@ -180,7 +180,7 @@ const doSelesai = async () => {
             </ul> -->
             <ul class="menu p-4 w-80 bg-base-100 text-base-content">
                 <div v-if="tipe === null">1.</div>
-                <div v-else-if="tipe === 'skolastik'">2.</div>
+                <div v-else-if="tipe === 'Skolastik'">2.</div>
                 <div v-else-if="tipe === 'KFace'">3.</div>
                 <div v-else>else {{ tipe }}</div>
                 <span class="py-10">
