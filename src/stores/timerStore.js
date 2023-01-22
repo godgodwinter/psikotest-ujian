@@ -16,6 +16,14 @@ export const useTimerStore = defineStore('timerStore', () => {
     waktu.value = n;
   }
 
+
+
+  const ujianTipe = ref(null)
+  const getUjianTipe = computed(() => ujianTipe.value);
+  const setUjianTipe = (n) => {
+    ujianTipe.value = n;
+  }
+
   // Fn
   function fnDecrement() {
     waktu.value--
@@ -43,5 +51,8 @@ export const useTimerStore = defineStore('timerStore', () => {
 
   }
 
-  return { waktu, getWaktu, fnDecrement, setWaktu, doJalankanTimer }
+  return {
+    waktu, getWaktu, fnDecrement, setWaktu, doJalankanTimer,
+    ujianTipe, getUjianTipe, setUjianTipe
+  }
 })

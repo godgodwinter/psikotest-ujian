@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, defineAsyncComponent } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import Toast from "@/components/lib/Toast.js";
 import API from "@/services/authServices";
@@ -8,22 +8,51 @@ import { useStoreAdminAuth } from "@/stores/adminAuth";
 import moment from "moment/min/moment-with-locales";
 import localization from "moment/locale/id";
 import { useTimerStore } from "@/stores/timerStore";
+const LoadingNavbar = defineAsyncComponent(() =>
+    import('@/layouts/components/LoadingNavbar.vue')
+)
+const LoadingSidebar = defineAsyncComponent(() =>
+    import('@/layouts/components/LoadingSidebar.vue')
+)
+const SkolastikNavbar = defineAsyncComponent(() =>
+    import('@/layouts/components/SkolastikNavbar.vue')
+)
+const SkolastikSidebar = defineAsyncComponent(() =>
+    import('@/layouts/components/SkolastikSidebar.vue')
+)
+const KfaceNavbar = defineAsyncComponent(() =>
+    import('@/layouts/components/KfaceNavbar.vue')
+)
+const KfaceSidebar = defineAsyncComponent(() =>
+    import('@/layouts/components/KfaceSidebar.vue')
+)
+const DefaultNavbar = defineAsyncComponent(() =>
+    import('@/layouts/components/DefaultNavbar.vue')
+)
+const DefaultSidebar = defineAsyncComponent(() =>
+    import('@/layouts/components/DefaultSidebar.vue')
+)
 const BASE_URL_FE = import.meta.env.VITE_API_URLFE
     ? import.meta.env.VITE_API_URLFE
     : "http://localhost:1000/";
 const timerStore = useTimerStore();
-timerStore.$subscribe((mutation, state) => {
-    // console.log(mutation, state);
-    // console.log(mutation);
-    // console.log(state.waktu);
-    if (state.waktu == 0) {
-        getData();
-    }
-}, { detached: false }) //jika detached true :terpisah meskipun komponent di unmount subcrib tetap dijalankan [bug jika halaman di buka 2x akan dieksekusi 2x]
+timerStore.$subscribe(
+    (mutation, state) => {
+        // console.log(mutation, state);
+        // console.log(mutation);
+        // console.log(state.waktu);
+        if (state.waktu == 0) {
+            getData();
+        }
+    },
+    { detached: false }
+); //jika detached true :terpisah meskipun komponent di unmount subcrib tetap dijalankan [bug jika halaman di buka 2x akan dieksekusi 2x]
 // timerStore.decrement();
 const waktu = computed(() => timerStore.getWaktu);
+const ujianTipe = computed(() => timerStore.getUjianTipe);
 
 const timer = ref(10);
+const tipe = ref(null);
 
 moment.updateLocale("id", localization);
 const storeAdminAuth = useStoreAdminAuth();
@@ -34,7 +63,7 @@ const doLogout = async () => {
         if (res === true) {
             router.push({ name: "Login" });
         }
-    };
+    }
 };
 const token = computed(() => storeAdminAuth.getToken);
 const resCheckToken = ref([]);
@@ -55,15 +84,20 @@ if (token.value) {
     router.push({ name: "LandingLogin" });
 }
 
-
-const dataProsesUjianAktif = ref(null)
-const dataProsesUjianAktif_waktu = ref(null)
-const menit = ref(null)
+const dataProsesUjianAktif = ref(null);
+const dataProsesUjianAktif_waktu = ref(null);
+const menit = ref(null);
 const getData = async () => {
     try {
         const response = await Api.get(`siswa/v2/data/ujian/proses/aktif`);
         dataProsesUjianAktif.value = response.data;
-        dataProsesUjianAktif_waktu.value = dataProsesUjianAktif.value?.sisa_waktu.detik;
+        timerStore.setUjianTipe(dataProsesUjianAktif.value?.tipe);
+        tipe.value = ujianTipe.value;
+        // console.log('====================================');
+        // console.log(dataProsesUjianAktif.value);
+        // console.log('====================================');
+        dataProsesUjianAktif_waktu.value =
+            dataProsesUjianAktif.value?.sisa_waktu.detik;
         // menit.value = moment.utc(dataProsesUjianAktif_waktu.value * 1000).format('HH:mm:ss');
         if (dataProsesUjianAktif.value) {
             onKlik(dataProsesUjianAktif_waktu.value);
@@ -79,89 +113,42 @@ getData();
 const onKlik = (time) => {
     timerStore.doJalankanTimer(time);
     // timerStore.fnDecrement();
-}
+};
 
-
-const linkSoal = ref(null)
+const linkSoal = ref(null);
 const doSelesai = async () => {
     if (confirm("Apakah anda yakin mengakhiri sesi ujian ini ?")) {
         try {
-            const response = await Api.post(`siswa/v2/data/ujian/aktif/aspek/null/datasoal/finish`);
+            const response = await Api.post(
+                `siswa/v2/data/ujian/aktif/aspek/null/datasoal/finish`
+            );
             Toast.success("Success", "Sesi ujian berakhir!");
             // router.go();
             router.push({
-                name: "ujian.psikotest.paket"
-            })
-
+                name: "ujian.psikotest.paket",
+            });
         } catch (error) {
             Toast.danger("Warning", "Data gagal disimpan!");
             console.error(error);
         }
-    };
+    }
 };
+
+// 1. loading layout -> sebelum pemeriksaan
+// 2. skolastik layout -> ketika ujian skolastik aktif
+// 3. kface layout -> ketika ujian kface aktif
+// else. default layout ->  ketika diperiksa tidak ada ujian aktif
 </script>
 
 <template>
     <div data-theme="winter">
-        <div class="fixed z-50  navbar bg-base-300 top-0">
-            <div class="navbar bg-base-300">
-                <div class="navbar-start">
-                    <div class="dropdown">
-                        <label tabindex="0" class="btn btn-ghost lg:hidden">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6h16M4 12h8m-8 6h16" />
-                            </svg>
-                        </label>
-                        <ul tabindex="0"
-                            class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
-                            <RouterLink :to="{ name: 'ujian.psikotest.index' }">
-                                <li><a>Beranda</a></li>
-                            </RouterLink>
-                            <RouterLink :to="{ name: 'ujian.psikotest.paket' }">
-                                <li><a>Paket</a></li>
-                            </RouterLink>
-                            <!-- <li><a>Proses</a></li> -->
-                        </ul>
-                    </div>
-                    <label for="my-drawer" class="btn btn-primary drawer-button btn-sm" v-if="dataProsesUjianAktif">
-                        MENU SOAL
-                    </label>
-                    <RouterLink :to="{ name: 'ujian.psikotest.paket' }" v-else>
-                        <span class="btn btn-ghost normal-case text-xl">
-                            UJIAN
-                        </span>
-                    </RouterLink>
-                </div>
-                <div class="navbar-center hidden lg:flex">
-                    <ul class="menu menu-horizontal px-1">
-                        <RouterLink :to="{ name: 'ujian.psikotest.index' }">
-                            <li><a>Beranda</a></li>
-                        </RouterLink>
-                        <RouterLink :to="{ name: 'ujian.psikotest.paket' }">
-                            <li><a>Paket</a></li>
-                        </RouterLink>
-                        <!-- <li><a>Proses</a></li> -->
-                    </ul>
-                </div>
-                <div class="navbar-end space-x-2">
-                    <a :href="linkSoal + 1" class="btn btn-sm" v-if="dataProsesUjianAktif"> {{
-                        moment.utc(waktu *
-                            1000).format('HH:mm:ss')
-                    }}</a>
-                    <button class="btn btn-default btn-sm" @click="doLogout()" v-else>Logout</button>
-                    <!-- <label for="my-drawer" class="btn btn-primary drawer-button">
-                    Soal
-                </label> -->
-                    <!-- <a class="btn"
-          ><span class="countdown font-mono text-2xl">
-            <span style="--value: 10"></span>:
-            <span style="--value: 24"></span>:
-            <span style="--value: 52"></span> </span
-        ></a> -->
-                </div>
-            </div>
+        <div class="fixed z-50 navbar bg-base-300 top-0">
+            <!-- NAVBAR-START -->
+            <LoadingNavbar v-if="tipe === null">1.</LoadingNavbar>
+            <SkolastikNavbar v-else-if="tipe === 'skolastik'">2.</SkolastikNavbar>
+            <KfaceNavbar v-else-if="tipe === 'KFace'" />
+            <DefaultNavbar v-else>else {{ tipe }}</DefaultNavbar>
+            <!-- NAVBAR-END -->
         </div>
         <div class="divider"></div>
 
@@ -192,28 +179,31 @@ const doSelesai = async () => {
                 <li><a>Sidebar Item 2</a></li>
             </ul> -->
             <ul class="menu p-4 w-80 bg-base-100 text-base-content">
+                <div v-if="tipe === null">1.</div>
+                <div v-else-if="tipe === 'skolastik'">2.</div>
+                <div v-else-if="tipe === 'KFace'">3.</div>
+                <div v-else>else {{ tipe }}</div>
                 <span class="py-10">
-
                     <div class="divider"></div>
-                    <div class="flex flex-wrap  gap-2">
-                        <span v-for="item, index in dataProsesUjianAktif.hasil" :key="item.id">
+                    <div class="flex flex-wrap gap-2">
+                        <span v-for="(item, index) in dataProsesUjianAktif.hasil" :key="item.id">
                             <a :href="linkSoal + (index + 1)" class="btn btn-md btn-info" v-if="item.kode_jawaban">{{
-                            (index + 1)
-                            }}</a>
-                            <a :href="linkSoal + (index + 1)" class="btn btn-md btn-warning" v-else>{{
-                            (index + 1)
-                            }}</a>
+                            index + 1 }}</a>
+                            <a :href="linkSoal + (index + 1)" class="btn btn-md btn-warning" v-else>{{ index + 1 }}</a>
                         </span>
                     </div>
-
                 </span>
                 <div class="divider"></div>
                 <span>
-                    <button class="btn btn-error btn-md" @click="doSelesai()">Selesai</button>
+                    <button class="btn btn-error btn-md" @click="doSelesai()">
+                        Selesai
+                    </button>
                 </span>
                 <div class="divider"></div>
                 <span>
-                    <button class="btn btn-primary btn-md" @click="getData()">Refresh Data</button>
+                    <button class="btn btn-primary btn-md" @click="getData()">
+                        Refresh Data
+                    </button>
                 </span>
                 <div class="divider"></div>
                 <div>
@@ -228,7 +218,9 @@ const doSelesai = async () => {
                                 <tr>
                                     <th>Jumlah Terjawab</th>
                                     <td>:</td>
-                                    <td>{{ dataProsesUjianAktif.paketsoal_soal_jml_terjawab }}</td>
+                                    <td>
+                                        {{ dataProsesUjianAktif.paketsoal_soal_jml_terjawab }}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>Jumlah Terjawab</th>

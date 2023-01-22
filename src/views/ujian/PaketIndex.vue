@@ -32,11 +32,15 @@ const doMulai = (id, tipe) => {
     Toast.warning("Info", 'Menu belum tersedia!');
   }
 }
-const doLanjutkan = (id) => {
-  router.push({
-    name: 'ujian.psikotest.paket.proses',
-    params: { aspek_id: id, no_soal: 1 }
-  })
+const doLanjutkan = (id, tipe) => {
+  if (tipe == 'Skolastik') {
+    router.push({
+      name: 'ujian.psikotest.paket.proses',
+      params: { aspek_id: id, no_soal: 1 }
+    })
+  } else if (tipe == 'KFace') {
+    Toast.warning("Info", 'Menu belum tersedia!');
+  }
   // console.log('====================================');
   // console.log('lanjutkan', id);
   // console.log('====================================');
@@ -74,7 +78,7 @@ const doLanjutkan = (id) => {
             <th>{{ item.paketsoal_nama }}</th>
             <td>
               <button class="btn btn-info" v-if="item.status == 'lanjutkan'"
-                @click="doLanjutkan(item.id)">LANJUTKAN</button>
+                @click="doLanjutkan(item.id, item.tipe)">LANJUTKAN</button>
               <button class="btn btn-warning" v-else-if="item.status == 'selesai'">SELESAI</button>
               <button class="btn btn-primary" v-else @click="doMulai(item.id, item.tipe)">MULAI</button>
 
