@@ -68,7 +68,7 @@ const doSelesai = async () => {
     if (confirm("Apakah anda yakin mengakhiri sesi ujian ini ?")) {
         try {
             const response = await Api.post(
-                `siswa/v2/data/ujian/aktif/aspek/null/datasoal/finish`
+                `siswa/v2/data/ujian/aktif/kface/null/datasoal/finish`
             );
             Toast.success("Success", "Sesi ujian berakhir!");
             // router.go();
@@ -101,11 +101,11 @@ const doSelesai = async () => {
         </button>
     </span>
     <div class="divider"></div>
-    <span>
+    <!-- <span>
         <button class="btn btn-primary btn-md" @click="getData()">
             Refresh Data
         </button>
-    </span>
+    </span> -->
     <div class="divider"></div>
     <div>
         <div class="overflow-x-auto">

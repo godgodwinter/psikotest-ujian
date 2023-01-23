@@ -1,14 +1,33 @@
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Api from "@/axios/axios";
+import Toast from "@/components/lib/Toast.js";
+import { useTimerStore } from "@/stores/timerStore";
+const BASE_URL_FE = import.meta.env.VITE_API_URLFE
+    ? import.meta.env.VITE_API_URLFE
+    : "http://localhost:1000/";
+const timerStore = useTimerStore();
 const route = useRoute();
 const router = useRouter();
 const no_soal = ref(route.params.no_soal);
+// timerStore.$subscribe(
+//     (mutation, state) => {
+//         // console.log(mutation, state);
+//         // console.log(mutation);
+//         // console.log(state.waktu);
+//         if (state.waktu == 0) {
+//             getData(no_soal.value);
+//         }
+//     },
+//     { detached: false }
+// ); //jika detached true :terpisah meskipun komponent di unmount subcrib tetap dijalankan [bug jika halaman di buka 2x akan dieksekusi 2x]
+const ujianTipe = computed(() => timerStore.getUjianTipe);
 const soal = ref(null);
 const soal_jml = ref(0);
 const aspek = ref(null);
+
 // const doNext = (id) => {
 //     router.replace({ name: 'karakter.proses', params: { no_soal: 1 } })
 //     // router.go(0)
@@ -21,9 +40,9 @@ const aspek = ref(null);
 // const linkNext = ref(`http://localhost:1000/karakter/proses/${parseInt(no_soal) + 1}`)
 const dataForm = ref([]);
 
-const getData = async () => {
+const getData = async (nomer) => {
     try {
-        const response = await Api.get(`siswa/v2/data/ujian/aktif/kface/null/soal/${no_soal.value}`);
+        const response = await Api.get(`siswa/v2/data/ujian/aktif/kface/null/soal/${nomer}`);
         soal.value = response.data?.soal;
         aspek.value = response.data?.aspek;
         soal_jml.value = response.data?.soal_jml;
@@ -32,14 +51,12 @@ const getData = async () => {
             // console.log('====================================');
             // console.log(aspek.value[i].id);
             // console.log('====================================');
-            dataForm.value[aspek.value[i].id] = 1;
+            dataForm.value[aspek.value[i].id] = aspek.value[i].skor;
         }
     } catch (error) {
         console.error(error);
     }
 };
-getData();
-
 
 const goNext = (nomer) => {
     let no_go = parseInt(nomer) + 1;
@@ -54,14 +71,52 @@ const goBack = (nomer) => {
     router.push({ name: 'ujian.psikotest.kface.proses', params: { no_soal: (no_go) } });
 }
 
-const doSave = (id) => {
-    console.log('====================================');
-    console.log(id, dataForm.value[id]);
-    console.log('====================================');
+const doSave = async (id) => {
+    // console.log('====================================');
+    // console.log(id, dataForm.value[id]);
+    // console.log('====================================');
+    let skor = dataForm.value[id];
+    if (skor > 10) {
+        Toast.warning("Gagal disimpan", "Nilai tidak boleh lebih dari 10")
+    } else if (skor < 0) {
+        Toast.warning("Gagal disimpan", "Nilai tidak boleh kurang dari 0")
+    } else {
+        fnSave(id);
+    }
+
+
 }
+
+const fnSave = async (id) => {
+    let dataStore = {
+        jawaban: dataForm.value[id],
+    };
+    try {
+        const response = await Api.post(`siswa/v2/data/ujian/aktif/kface/null/soal/${id}`, dataStore);
+        Toast.success("Success", "Data Berhasil disimpan!");
+        getData(no_soal.value);
+
+    } catch (error) {
+        Toast.danger("Warning", "Data gagal disimpan!");
+        console.error(error);
+    }
+}
+
+setTimeout(
+    () => {
+        if (ujianTipe.value == 'KFace') {
+            getData(no_soal.value);
+        } else {
+            Toast.warning("Ujian karakterface tidak aktif!");
+        }
+
+    }
+    , 2000);
+
 </script>
   
 <template>
+    <div>{{ ujianTipe }}</div>
     <div v-if="soal">
         <div class="p-4">
             <div class="alert alert-info shadow-lg">
@@ -118,7 +173,9 @@ const doSave = (id) => {
                                         <div class="form-control w-full">
                                             <label class="label">
                                                 <span class="label-text">{{ item.aspek_nama }}:</span>
-                                                <span class="label-text-alt">Status: Tersimpan</span>
+                                                <span class="label-text-alt capitalize">Status: {{
+                                                    item.isTerjawab ? item.isTerjawab : 'Belum'
+                                                }}</span>
                                             </label>
                                             <!-- <input type="number" value="1" min="0" max="10" placeholder="Isi angka 0-10"
                                                 class="input input-bordered w-full" /> -->
@@ -141,11 +198,11 @@ const doSave = (id) => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <label class="label">
+                                            <!-- <label class="label">
                                                 <span class="label-text-alt text-error">Harus diisi nilai diantara 0
                                                     sampai
                                                     10 !</span>
-                                            </label>
+                                            </label> -->
                                         </div>
                                     </div>
                                 </div>
@@ -165,15 +222,36 @@ const doSave = (id) => {
                                         <div class="form-control w-full">
                                             <label class="label">
                                                 <span class="label-text">{{ item.aspek_nama }}:</span>
-                                                <span class="label-text-alt">Status: Tersimpan</span>
+                                                <span class="label-text-alt capitalize">Status: {{
+                                                    item.isTerjawab ? item.isTerjawab : 'Belum'
+                                                }}</span>
                                             </label>
-                                            <input type="number" value="1" min="0" max="10" placeholder="Isi angka 0-10"
-                                                class="input input-bordered w-full" />
-                                            <label class="label">
+                                            <!-- <input type="number" value="1" min="0" max="10" placeholder="Isi angka 0-10"
+                                                class="input input-bordered w-full" /> -->
+
+                                            <div class="px-4">
+                                                <div class="form-control">
+                                                    <div class="input-group">
+                                                        <input type="number" min="0" max="10"
+                                                            v-model="dataForm[item.id]" placeholder="Isi angka 0-10"
+                                                            class="input input-bordered w-full" />
+                                                        <button class="btn btn-square " @click="doSave(item.id)">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                                viewBox="0 0 24 24" stroke-width="1.5"
+                                                                stroke="currentColor" class="w-6 h-6">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" />
+                                                            </svg>
+
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <label class="label">
                                                 <span class="label-text-alt text-error">Harus diisi nilai diantara 0
                                                     sampai
                                                     10 !</span>
-                                            </label>
+                                            </label> -->
                                         </div>
                                     </div>
                                 </div>
@@ -199,7 +277,7 @@ const doSave = (id) => {
                     <button class="btn btn-sm btn-accent">Sebelumnya</button>
                 </button>
                 <button @click="goNext(no_soal)" v-if="no_soal < soal_jml">
-                    <button class="btn btn-sm btn-info">Selanjutnya</button>
+                    <button class="btn btn-sm btn-info">Selanjutnya {{ no_soal }}</button>
                 </button>
             </div>
         </div>
