@@ -30,6 +30,11 @@ const ujianPsikotesRoutes = [
         name: "ujian.psikotest.paket.aspek",
         component: () => import("@/views/ujian/PaketAspek.vue"),
       },
+      {
+        path: "/paket/kface/instruksi",
+        name: "ujian.psikotest.kface.instruksi",
+        component: () => import("@/views/kface/KfaceInstruksi.vue"),
+      },
     ],
 
   },
@@ -52,6 +57,11 @@ const ujianPsikotesRoutes = [
         path: "/paket/aspek/:aspek_id/nomer/:no_soal",
         name: "ujian.psikotest.paket.proses",
         component: () => import("@/views/ujian/PaketProses.vue"),
+      },
+      {
+        path: "/kface/soal/:no_soal",
+        name: "ujian.psikotest.kface.proses",
+        component: () => import("@/views/kface/ProsesIndex.vue"),
       },
     ]
   },

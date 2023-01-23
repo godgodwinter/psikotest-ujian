@@ -180,57 +180,61 @@ const doSelesai = async () => {
             </ul> -->
             <ul class="menu p-4 w-80 bg-base-100 text-base-content">
                 <div v-if="tipe === null">1.</div>
-                <div v-else-if="tipe === 'Skolastik'">2.</div>
-                <div v-else-if="tipe === 'KFace'">3.</div>
-                <div v-else>else {{ tipe }}</div>
-                <span class="py-10">
+                <div v-else-if="tipe === 'Skolastik'">
+
+                    <span class="py-10">
+                        <div class="divider"></div>
+                        <div class="flex flex-wrap gap-2">
+                            <span v-for="(item, index) in dataProsesUjianAktif.hasil" :key="item.id">
+                                <a :href="linkSoal + (index + 1)" class="btn btn-md btn-info"
+                                    v-if="item.kode_jawaban">{{
+                                    index + 1 }}</a>
+                                <a :href="linkSoal + (index + 1)" class="btn btn-md btn-warning" v-else>{{ index + 1
+                                }}</a>
+                            </span>
+                        </div>
+                    </span>
                     <div class="divider"></div>
-                    <div class="flex flex-wrap gap-2">
-                        <span v-for="(item, index) in dataProsesUjianAktif.hasil" :key="item.id">
-                            <a :href="linkSoal + (index + 1)" class="btn btn-md btn-info" v-if="item.kode_jawaban">{{
-                            index + 1 }}</a>
-                            <a :href="linkSoal + (index + 1)" class="btn btn-md btn-warning" v-else>{{ index + 1 }}</a>
-                        </span>
-                    </div>
-                </span>
-                <div class="divider"></div>
-                <span>
-                    <button class="btn btn-error btn-md" @click="doSelesai()">
-                        Selesai
-                    </button>
-                </span>
-                <div class="divider"></div>
-                <span>
-                    <button class="btn btn-primary btn-md" @click="getData()">
-                        Refresh Data
-                    </button>
-                </span>
-                <div class="divider"></div>
-                <div>
-                    <div class="overflow-x-auto">
-                        <table class="table w-full">
-                            <tbody>
-                                <tr>
-                                    <th>Jumlah Soal</th>
-                                    <td>:</td>
-                                    <td>{{ dataProsesUjianAktif.paketsoal_soal_jml }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Jumlah Terjawab</th>
-                                    <td>:</td>
-                                    <td>
-                                        {{ dataProsesUjianAktif.paketsoal_soal_jml_terjawab }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Jumlah Terjawab</th>
-                                    <td>:</td>
-                                    <td>{{ dataProsesUjianAktif.paketsoal_soal_jml_belum }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <span>
+                        <button class="btn btn-error btn-md" @click="doSelesai()">
+                            Selesai
+                        </button>
+                    </span>
+                    <div class="divider"></div>
+                    <span>
+                        <button class="btn btn-primary btn-md" @click="getData()">
+                            Refresh Data
+                        </button>
+                    </span>
+                    <div class="divider"></div>
+                    <div>
+                        <div class="overflow-x-auto">
+                            <table class="table w-full">
+                                <tbody>
+                                    <tr>
+                                        <th>Jumlah Soal</th>
+                                        <td>:</td>
+                                        <td>{{ dataProsesUjianAktif.paketsoal_soal_jml }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Jumlah Terjawab</th>
+                                        <td>:</td>
+                                        <td>
+                                            {{ dataProsesUjianAktif.paketsoal_soal_jml_terjawab }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Jumlah Terjawab</th>
+                                        <td>:</td>
+                                        <td>{{ dataProsesUjianAktif.paketsoal_soal_jml_belum }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+                <KfaceSidebar v-else-if="tipe === 'KFace'"></KfaceSidebar>
+                <div v-else>else {{ tipe }}</div>
             </ul>
         </div>
     </div>

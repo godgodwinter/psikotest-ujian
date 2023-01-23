@@ -77,7 +77,7 @@ const getData = async () => {
         // menit.value = moment.utc(dataProsesUjianAktif_waktu.value * 1000).format('HH:mm:ss');
         if (dataProsesUjianAktif.value) {
             onKlik(dataProsesUjianAktif_waktu.value);
-            linkSoal.value = `${BASE_URL_FE}paket/aspek/${dataProsesUjianAktif.value.id}/nomer/`;
+            linkSoal.value = `${BASE_URL_FE}kface/soal/`;
             // console.log(linkSoal.value);
         }
         return response.data;

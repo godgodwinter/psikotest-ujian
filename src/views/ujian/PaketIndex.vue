@@ -29,7 +29,11 @@ const doMulai = (id, tipe) => {
       params: { aspek_id: id }
     })
   } else if (tipe == 'KFace') {
-    Toast.warning("Info", 'Menu belum tersedia!');
+    // Toast.warning("Info", 'Menu belum tersedia!');
+    router.push({
+      name: 'ujian.psikotest.kface.instruksi',
+      // params: { aspek_id: id }
+    })
   }
 }
 const doLanjutkan = (id, tipe) => {
@@ -39,7 +43,11 @@ const doLanjutkan = (id, tipe) => {
       params: { aspek_id: id, no_soal: 1 }
     })
   } else if (tipe == 'KFace') {
-    Toast.warning("Info", 'Menu belum tersedia!');
+    // Toast.warning("Info", 'Menu belum 
+    router.push({
+      name: 'ujian.psikotest.kface.proses',
+      params: { no_soal: 1 }
+    })
   }
   // console.log('====================================');
   // console.log('lanjutkan', id);
