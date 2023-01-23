@@ -19,7 +19,7 @@ const aspek = ref(null);
 // }
 // const linkBefore = ref(`http://localhost:1000/karakter/proses/${parseInt(no_soal) - 1}`)
 // const linkNext = ref(`http://localhost:1000/karakter/proses/${parseInt(no_soal) + 1}`)
-
+const dataForm = ref([]);
 
 const getData = async () => {
     try {
@@ -27,6 +27,13 @@ const getData = async () => {
         soal.value = response.data?.soal;
         aspek.value = response.data?.aspek;
         soal_jml.value = response.data?.soal_jml;
+
+        for (let i = 0; i < aspek.value.length; i++) {
+            // console.log('====================================');
+            // console.log(aspek.value[i].id);
+            // console.log('====================================');
+            dataForm.value[aspek.value[i].id] = 1;
+        }
     } catch (error) {
         console.error(error);
     }
@@ -45,6 +52,12 @@ const goBack = (nomer) => {
     getData(no_go);
     no_soal.value = no_go;
     router.push({ name: 'ujian.psikotest.kface.proses', params: { no_soal: (no_go) } });
+}
+
+const doSave = (id) => {
+    console.log('====================================');
+    console.log(id, dataForm.value[id]);
+    console.log('====================================');
 }
 </script>
   
@@ -107,8 +120,27 @@ const goBack = (nomer) => {
                                                 <span class="label-text">{{ item.aspek_nama }}:</span>
                                                 <span class="label-text-alt">Status: Tersimpan</span>
                                             </label>
-                                            <input type="number" value="1" min="0" max="10" placeholder="Isi angka 0-10"
-                                                class="input input-bordered w-full" />
+                                            <!-- <input type="number" value="1" min="0" max="10" placeholder="Isi angka 0-10"
+                                                class="input input-bordered w-full" /> -->
+
+                                            <div class="px-4">
+                                                <div class="form-control">
+                                                    <div class="input-group">
+                                                        <input type="number" min="0" max="10"
+                                                            v-model="dataForm[item.id]" placeholder="Isi angka 0-10"
+                                                            class="input input-bordered w-full" />
+                                                        <button class="btn btn-square " @click="doSave(item.id)">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                                viewBox="0 0 24 24" stroke-width="1.5"
+                                                                stroke="currentColor" class="w-6 h-6">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" />
+                                                            </svg>
+
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <label class="label">
                                                 <span class="label-text-alt text-error">Harus diisi nilai diantara 0
                                                     sampai
