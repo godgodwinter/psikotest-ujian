@@ -117,19 +117,16 @@ const doSelesai = async () => {
 </script>
 
 <template>
-
     <div class="navbar bg-base-300">
         <div class="navbar-start">
             <div class="dropdown">
                 <label tabindex="0" class="btn btn-ghost lg:hidden">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h8m-8 6h16" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
                     </svg>
                 </label>
-                <ul tabindex="0"
-                    class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
+                <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
                     <RouterLink :to="{ name: 'ujian.psikotest.index' }">
                         <li><a>Beranda</a></li>
                     </RouterLink>
@@ -167,14 +164,14 @@ const doSelesai = async () => {
                 <img src="@/assets/img/svg-loaders/tail-spin.svg" /></label>
             <!-- <button class="btn btn-default btn-sm" @click="doLogout()" v-else>Logout</button> -->
             <!-- <label for="my-drawer" class="btn btn-primary drawer-button">
-                    Soal
-                </label> -->
+                        Soal
+                    </label> -->
             <!-- <a class="btn"
-          ><span class="countdown font-mono text-2xl">
-            <span style="--value: 10"></span>:
-            <span style="--value: 24"></span>:
-            <span style="--value: 52"></span> </span
-        ></a> -->
+              ><span class="countdown font-mono text-2xl">
+                <span style="--value: 10"></span>:
+                <span style="--value: 24"></span>:
+                <span style="--value: 52"></span> </span
+            ></a> -->
         </div>
     </div>
 </template>
